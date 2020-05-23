@@ -3,13 +3,13 @@
 module.exports = {
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('users', {
-            user_id: {
+            userId: {
                 allowNull: false,
                 primaryKey: true,
                 type: Sequelize.UUID,
                 defaultType: Sequelize.UUID4
             },
-            user_type: {
+            userType: {
                 allowNull: false,
                 type: Sequelize.STRING
             },
@@ -20,10 +20,6 @@ module.exports = {
             password: {
                 allowNull: true,
                 type: Sequelize.STRING
-            },
-            report: {
-                allowNull: true,
-                type: Sequelize.TEXT
             },
             createdAt: {
                 allowNull: false,

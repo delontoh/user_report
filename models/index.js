@@ -1,37 +1,42 @@
-// 'use strict';
-//
-// const fs = require('fs');
-// const path = require('path');
-// const Sequelize = require('sequelize');
-// const basename = path.basename(__filename);
-// const env = process.env.NODE_ENV || 'development';
-// const config = require(__dirname + '/../config/config.json')[env];
-// const db = {};
-//
-// let sequelize;
-// if (config.use_env_variable) {
-//   sequelize = new Sequelize(process.env[config.use_env_variable], config);
-// } else {
-//   sequelize = new Sequelize(config.database, config.username, config.password, config);
-// }
-//
-// fs
-//   .readdirSync(__dirname)
-//   .filter(file => {
-//     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-//   })
-//   .forEach(file => {
-//     const model = sequelize['import'](path.join(__dirname, file));
-//     db[model.name] = model;
-//   });
-//
-// Object.keys(db).forEach(modelName => {
-//   if (db[modelName].associate) {
-//     db[modelName].associate(db);
-//   }
-// });
-//
-// db.sequelize = sequelize;
-// db.Sequelize = Sequelize;
-//
-// module.exports = db;
+const Sequelize = require('sequelize');
+const Model = Sequelize.Model;
+const constant = require('../config/constant.json');
+
+module.exports = (db) => {
+
+    class Users extends Model {}
+    Users.init({
+        userId: { type: Sequelize.UUID4, primaryKey: true, defaultValue: Sequelize.UUIDV4 },
+        userType: { type: Sequelize.STRING, allowNull: false },
+        userName: {type: Sequelize.STRING, allowNull: false},
+        password: {type: Sequelize.STRING, allowNull: true},
+        createdAt: Sequelize.DATE,
+        updatedAt: Sequelize.DATE
+    }, {
+        sequelize: db,
+        freezeTableName: true,
+        modelName: 'Users',
+        tableName: 'users'
+    });
+
+    class Reports extends Model {}
+    Reports.init({
+        reportId: { type: Sequelize.UUID4, primaryKey: true, defaultValue: Sequelize.UUIDV4 },
+        content: { type: Sequelize.TEXT, allowNull: false },
+        reportDate: {type: Sequelize.DATE, allowNull: false},
+        userId: {type: Sequelize.UUIDV4, allowNull: false, references: { model: Users, key: 'userId' } },
+        createdAt: Sequelize.DATE,
+        updatedAt: Sequelize.DATE
+    }, {
+        sequelize: db,
+        freezeTableName: true,
+        modelName: 'Reports',
+        tableName: 'Reports'
+    });
+
+    return {
+        db,
+        UsersModel: Users,
+        ReportssModel: Reports
+    }
+}
