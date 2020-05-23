@@ -1,0 +1,9 @@
+# Node Modules #
+#####################
+node_modules/*
+
+# IDE configs
+.idea
+
+# sqlite data
+data/database.sqlite

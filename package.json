@@ -1,0 +1,37 @@
+{
+  "name": "user_report",
+  "version": "1.0.0",
+  "description": "NTT coding assignment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "NODE_ENV='development' node index.js",
+    "migrate:ups": "npx sequelize-cli db:migrate",
+    "migrate:down": "npx sequelize-cli db:migrate:undo",
+    "migrate:downs": "npx sequelize-cli db:migrate:undo:all",
+    "seed:ups": "npx sequelize-cli db:seed:all",
+    "seed:down": "npx sequelize-cli db:seed:undo",
+    "seed:downs": "npx sequelize-cli db:seed:undo:all"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/delontoh/user_report.git"
+  },
+  "author": "Delon Toh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/delontoh/user_report/issues"
+  },
+  "homepage": "https://github.com/delontoh/user_report#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "sequelize": "^5.21.10",
+    "sqlite3": "^4.2.0",
+    "uuid": "^8.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4",
+    "sequelize-cli": "^5.5.1"
+  }
+}
