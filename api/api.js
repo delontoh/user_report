@@ -101,6 +101,31 @@ module.exports = (db) => {
     })
 
     /**
+     * @api {post} /api/user/update-report
+     * @apiName UserUpdateReport
+     * @apiVersion 1.0.0
+     * @apiGroup Api
+     * @apiDescription Update report status by reportId
+     * @apiParam {String} reportId report id
+     */
+    router.post('/user/update-report', async (req, res, next) => {
+        try {
+            let data = {
+                reportId: req.body.reportId || '',
+                status: req.body.status || ''
+            };
+            // Check for missing request params
+            if(helpers.general.isEmpty(data.reportId)) throw new Error('Missing request param: reportId');
+            if(helpers.general.isEmpty(data.status)) throw new Error('Missing request param: status');
+            // Update report status
+            await ReportController.updateReportByReportId(data);
+            return helpers.api.createApiRes(req, res, 204, 'User report updated sucessfully', {});
+        } catch (err) {
+            return helpers.api.createApiRes(req, res, 500, err.message);
+        }
+    })
+
+    /**
      * @api {get} /api/admin/users-reports
      * @apiName AdminUsersReports
      * @apiVersion 1.0.0

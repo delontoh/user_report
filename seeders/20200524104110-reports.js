@@ -36,7 +36,7 @@ module.exports = {
                 userId: '2',
                 content: 'User 2: this is my second report',
                 reportDate: new Date(),
-                status: constants.REPORT_STATUS.DELETEDn,
+                status: constants.REPORT_STATUS.DELETED,
                 createdAt: new Date(),
                 updatedAt: new Date()
             }

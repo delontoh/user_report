@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import RaisedButton from "material-ui/RaisedButton";
 import moment from 'moment';
 import * as UsersModel from '../models/user';
-
+import UserReportTable from './UserReportTable';
 
 const style = {
     backgroundColor: 'transparent',
@@ -31,7 +31,7 @@ const labelStyle = {
  * define react component
  *====================================================================================================================*/
 
-const UserReport = (props) => {
+const UserReport = () => {
     Date.prototype.toDateInputValue = (function() {
         let local = new Date(this);
         local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
@@ -39,85 +39,90 @@ const UserReport = (props) => {
     });
 
     return(
-        <Formik
-            initialValues = {{date: new Date().toDateInputValue(), username: '', report: ''}}
-            onSubmit = {(values, {setSubmitting}) => {
-                setTimeout(() => {
-                    console.log("Submitting form =>> ", values);
-                    console.log(moment(values.date).toISOString());
+        <div className="row justify-content-center">
+            <Formik
+                initialValues = {{date: new Date().toDateInputValue(), username: '', report: ''}}
+                onSubmit = {(values, {setSubmitting}) => {
+                    setTimeout(() => {
+                        console.log("Submitting form =>> ", values);
+                        console.log(moment(values.date).toISOString());
 
-                    UsersModel.submitReport(values, () => {
-                        console.log('Form submitted sucessfully')
-                    });
+                        UsersModel.submitReport(values, () => {
+                            console.log('Form submitted sucessfully')
+                        });
 
-                    setSubmitting(false);
-                }, 500);
-            }}
-            validationSchema={Yup.object().shape({
-                report:
-                    Yup.string()
-                        .max(250, "Maximum of 250 characters")
-                        .required("Required*")
-            })}
-        >
-            {
-                (props) => {
-                    const {values, touched, errors, isSubmitting, handleChange, handleBlur, handleSubmit} = props;
+                        setSubmitting(false);
+                    }, 500);
+                }}
+                validationSchema={Yup.object().shape({
+                    report:
+                        Yup.string()
+                            .max(250, "Maximum of 250 characters")
+                            .required("Required*")
+                })}
+            >
+                {
+                    (props) => {
+                        const {values, touched, errors, isSubmitting, handleChange, handleBlur, handleSubmit} = props;
 
-                    return(
-                        <div>
-                            <h1>User Report Form</h1>
-                            <form onSubmit={handleSubmit}>
-                                <label for="date">Date</label>
-                                <input
-                                    name="date"
-                                    type="date"
-                                    placeholder="Select date"
-                                    value={values.date}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    className={errors.date && touched.date && "error"}
-                                />
-                                {errors.date && touched.date && (
-                                    <div className="input-feedback">{errors.date}</div>
-                                )}
+                        return(
+                            <div className='col-12 mb-5'>
+                                <h1>User Report Form</h1>
+                                <form onSubmit={handleSubmit}>
+                                    <label for="date">Date</label>
+                                    <input
+                                        name="date"
+                                        type="date"
+                                        placeholder="Select date"
+                                        value={values.date}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        className={errors.date && touched.date && "error"}
+                                    />
+                                    {errors.date && touched.date && (
+                                        <div className="input-feedback">{errors.date}</div>
+                                    )}
 
-                                <label for="username">Username</label>
-                                <input
-                                    name="username"
-                                    type="text"
-                                    placeholder="Username"
-                                    value={values.username}
-                                    disabled={true}
-                                />
+                                    <label for="username">Username</label>
+                                    <input
+                                        name="username"
+                                        type="text"
+                                        placeholder="Username"
+                                        value={values.username}
+                                        disabled={true}
+                                    />
 
-                                <label for="report">Report:</label>
-                                <textarea
-                                    name="report"
-                                    placeholder="Write report here (max 250 characters)"
-                                    value={values.report}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    className={errors.report && touched.report && "error"}
-                                />
-                                {errors.report && touched.report && (
-                                    <div className="input-feedback">{errors.report}</div>
-                                )}
+                                    <label for="report">Report:</label>
+                                    <textarea
+                                        name="report"
+                                        placeholder="Write report here (max 250 characters)"
+                                        value={values.report}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        className={errors.report && touched.report && "error"}
+                                    />
+                                    {errors.report && touched.report && (
+                                        <div className="input-feedback">{errors.report}</div>
+                                    )}
 
-                                <RaisedButton
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    style={style}
-                                    buttonStyle={buttonStyle}
-                                    labelStyle={labelStyle}
-                                    primary="true"
-                                >Submit</RaisedButton>
-                            </form>
-                        </div>
-                    )
+                                    <RaisedButton
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        style={style}
+                                        buttonStyle={buttonStyle}
+                                        labelStyle={labelStyle}
+                                        primary={true}
+                                    >Submit</RaisedButton>
+                                </form>
+                            </div>
+                        )
+                    }
                 }
-            }
-        </Formik>)
+            </Formik>
+
+            <UserReportTable/>
+
+        </div>)
 }
 
 UserReport.propTypes = {

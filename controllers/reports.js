@@ -73,5 +73,14 @@ module.exports = (db) => {
         return results;
     }
 
+    /**
+     * Update report status by reportId
+     * @returns {Promise<*>}
+     */
+    ReportsController.updateReportByReportId = async(data) => {
+        let { reportId, status } = data;
+        return await ReportsModel.update({status: status}, {where: {reportId: reportId}});
+    }
+
     return ReportsController;
 }

@@ -1,0 +1,52 @@
+
+/*======================================================================================================================
+ * React Table (https://react-table.js.org)
+ *====================================================================================================================*/
+// add caret icons beside column headers
+div.-sort-asc::after {
+  content: "\25BC";
+  position: absolute;
+  right: 6px;
+  top: 5px;
+}
+div.-sort-desc::after {
+  content: "\25B2";
+  position: absolute;
+  right: 6px;
+  top: 5px;
+}
+// remove default column header sort border style
+.ReactTable .rt-thead .rt-th.-sort-asc,
+.ReactTable .rt-thead .rt-td.-sort-asc,
+.ReactTable .rt-thead .rt-th.-sort-desc,
+.ReactTable .rt-thead .rt-td.-sort-desc {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+.ReactTable a.table-link,
+.ReactTable a.table-link span {
+  cursor: pointer;
+  color: #0091F4 !important;
+}
+.ReactTable a.table-link:hover,
+.ReactTable a.table-link:focus {
+  text-decoration: underline;
+}
+.ReactTable .rt-tbody .rt-tr-group {
+  line-height: 30px;
+}
+//IE11 fix
+.ReactTable .rt-table {
+  flex: auto 1 !important;
+}
+
+/*======================================================================================================================
+ * Font Awesome
+ *====================================================================================================================*/
+.fontawesom-btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+.fontawesom-btn:hover {
+  cursor: pointer;
+}
