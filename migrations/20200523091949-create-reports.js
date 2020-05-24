@@ -6,8 +6,11 @@ module.exports = {
       reportId: {
         allowNull: false,
         primaryKey: true,
-          type: Sequelize.UUID,
-          defaultType: Sequelize.UUID4
+          type: Sequelize.STRING,
+          defaultType: Sequelize.STRING
+      },
+      userId: {
+          type: Sequelize.STRING, allowNull: false
       },
       content: {
           allowNull: false,
@@ -17,16 +20,17 @@ module.exports = {
           allowNull: false,
           type: Sequelize.DATE
       },
-      userId: {
-          type: Sequelize.UUID, allowNull: false, references: { model: 'users', key: 'userId' }
+      status: {
+          type: Sequelize.STRING,
+          allowNull: false
       },
       createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+          allowNull: false,
+          type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+          allowNull: false,
+          type: Sequelize.DATE
       }
     });
   },

@@ -1,12 +1,12 @@
 const Sequelize = require('sequelize');
 const Model = Sequelize.Model;
-const constant = require('../config/constant.json');
+const constant = require('../config/constants');
 
 module.exports = (db) => {
 
     class Users extends Model {}
     Users.init({
-        userId: { type: Sequelize.UUID4, primaryKey: true, defaultValue: Sequelize.UUIDV4 },
+        userId: { type: Sequelize.STRING, primaryKey: true, defaultValue: Sequelize.STRING },
         userType: { type: Sequelize.STRING, allowNull: false },
         userName: {type: Sequelize.STRING, allowNull: false},
         password: {type: Sequelize.STRING, allowNull: true},
@@ -21,10 +21,11 @@ module.exports = (db) => {
 
     class Reports extends Model {}
     Reports.init({
-        reportId: { type: Sequelize.UUID4, primaryKey: true, defaultValue: Sequelize.UUIDV4 },
-        content: { type: Sequelize.TEXT, allowNull: false },
+        reportId: { type: Sequelize.STRING, primaryKey: true, defaultValue: Sequelize.STRING },
+        userId: {type: Sequelize.STRING, allowNull: false},
         reportDate: {type: Sequelize.DATE, allowNull: false},
-        userId: {type: Sequelize.UUIDV4, allowNull: false, references: { model: Users, key: 'userId' } },
+        content: { type: Sequelize.TEXT, allowNull: false },
+        status: {type: Sequelize.STRING, allowNull: false},
         createdAt: Sequelize.DATE,
         updatedAt: Sequelize.DATE
     }, {
@@ -37,6 +38,6 @@ module.exports = (db) => {
     return {
         db,
         UsersModel: Users,
-        ReportssModel: Reports
+        ReportsModel: Reports
     }
 }

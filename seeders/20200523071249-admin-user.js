@@ -1,15 +1,13 @@
 'use strict';
-
 const constants = require('../config/constants');
-const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
       return queryInterface.bulkInsert('users', [{
-          user_id: uuidv4(),
-          user_type: constants.USER_TYPE.ADMIN,
+          userId: 'admin123456',
+          userType: constants.USER_TYPE.ADMIN,
           userName: 'administrator',
-          password: '@admin',
+          password: '@admin123',
           createdAt: new Date(),
           updatedAt: new Date()
       }])

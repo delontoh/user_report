@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV='development' node index.js",
+    "nodemon": "NODE_ENV='development' nodemon --inspect --trace-warnings index.js",
     "migrate:ups": "npx sequelize-cli db:migrate",
     "migrate:down": "npx sequelize-cli db:migrate:undo",
     "migrate:downs": "npx sequelize-cli db:migrate:undo:all",
@@ -24,13 +25,18 @@
   },
   "homepage": "https://github.com/delontoh/user_report#readme",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
     "sequelize": "^5.21.10",
     "sqlite3": "^4.2.0",
     "uuid": "^8.1.0"
   },
   "devDependencies": {
+    "dotenv": "^8.2.0",
     "nodemon": "^2.0.4",
     "sequelize-cli": "^5.5.1"
   }
