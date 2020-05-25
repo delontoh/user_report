@@ -10,7 +10,8 @@ import FontAwesome from 'react-fontawesome';
 import moment from "moment";
 import { helpers } from '../helpers/index';
 import AdminReportDialog from './AdminReportDialog';
-import * as UsersModel from '../models/user';
+import * as AdminModel from '../models/admin';
+import user from "../reducers/user";
 
 const style = {
     dangerColor: '#f44336',
@@ -31,7 +32,7 @@ const promptMessage = {
 /*======================================================================================================================
  * define react component
  *====================================================================================================================*/
-class AdminReport extends React.Component {
+class AdminReportTable extends React.Component {
 
     constructor() {
         super();
@@ -39,58 +40,37 @@ class AdminReport extends React.Component {
             showReportDialog: false,
             dialogContent: '',
             open: false,
-        }
+            data: []
+        };
     }
 
     componentDidMount() {
-        // fetch all reports given user id
-        let dummyData = [
-            {
-                userId: "1",
-                userName: "username1",
-                userType: "user",
-                reportId: "1",
-                reportDate: "2020-05-24 11:01:47.220 +00:00",
-                content: "User 1: this is my first report",
-                status: "pending",
-                createdAt: "2020-05-24 11:01:47.220 +00:00",
-                updatedAt: "2020-05-24 11:01:47.220 +00:00"
-            },
-            {
-                userId: "1",
-                userName: "username1",
-                userType: "user",
-                reportId: "2",
-                reportDate: "2020-05-24 11:01:47.220 +00:00",
-                content: "User 1: this is my second report",
-                status: "approved",
-                createdAt: "2020-05-24 11:01:47.220 +00:00",
-                updatedAt: "2020-05-24 11:20:11.173 +00:00"
-            },
-            {
-                userId: "2",
-                userName: "username2",
-                userType: "user",
-                reportId: "3",
-                reportDate: "2020-05-24 11:01:47.220 +00:00",
-                content: "User 2: this is my first report",
-                status: "deleted",
-                createdAt: "2020-05-24 11:01:47.220 +00:00",
-                updatedAt: "2020-05-24 11:20:48.790 +00:00"
-            },
-            {
-                userId: "2",
-                userName: "username2",
-                userType: "user",
-                reportId: "4",
-                reportDate: "2020-05-24 11:01:47.220 +00:00",
-                content: "User 2: this is my second report",
-                status: "deleted",
-                createdAt: "2020-05-24 11:01:47.220 +00:00",
-                updatedAt: "2020-05-24 11:01:47.220 +00:00"
+        let { currentUser, history } = this.props;
+
+        if(!currentUser) {
+            history.push('/login');
+        } else {
+            // Redirects user to report page if userType is user
+            if(currentUser.userType && currentUser.userType === 'user') {
+                history.push('/report');
+            } else {
+                // Fetch all users reports by admin userId
+                this.fetchAllUsersReport(currentUser);
             }
-        ]
-        this.setState({data: dummyData});
+        }
+    }
+
+    fetchAllUsersReport(currentUser) {
+        // Fetch all users data with admin userId
+        let userId = currentUser.userId;
+        let query = {
+            userId: userId
+        };
+        AdminModel.adminGetAllReports(query, (response) => {
+            if(response && response.users) {
+                this.setState({data: response.users});
+            }
+        })
     }
 
     formatStatusColor(status) {
@@ -125,13 +105,11 @@ class AdminReport extends React.Component {
                 accessor: '',
                 id: 'reportDate',
                 width: 150,
+                style: {textAlign: 'center'},
                 Cell: ({ original }) => {
-                    let date = new Date(original.reportDate);
-                    let day_raw = date.getDate();
-                    let month_raw = date.getMonth() + 1;
-                    let day = day_raw < 10 ? '0' + day_raw : '' + day_raw;
-                    let month = month_raw < 10 ? '0' + month_raw : '' + month_raw;
-                    return `${day}/${month}/${date.getFullYear()}`;
+                    let str = original.reportDate;
+                    let date = moment.parseZone(str).format('DD/MM/YYYY');
+                    return `${date}`;
                 }
             },
             {
@@ -139,6 +117,7 @@ class AdminReport extends React.Component {
                 accessor: 'status',
                 id: 'status',
                 width: 100,
+                style: {textAlign: 'center'},
                 Cell: ({original}) => {
                     return self.formatStatusColor(original.status);
                 }
@@ -147,12 +126,13 @@ class AdminReport extends React.Component {
                 Header: 'Edit Report',
                 accessor: '',
                 style: {textAlign: 'center'},
-                width: 200,
+                width: 150,
                 filterable: false,
                 sortable: false,
                 Cell: ({original}) => {
                     let reportInfo = {
-                        date: moment.parseZone(original.reportDate).format('DD-MM-YYYY'),
+                        reportId: original.reportId,
+                        date: moment.parseZone(original.reportDate).format('YYYY-MM-DD'),
                         userName: original.userName,
                         content: original.content,
                     }
@@ -172,16 +152,19 @@ class AdminReport extends React.Component {
                 Header: 'Approve',
                 accessor: '',
                 style: {textAlign: 'center'},
-                width: 200,
+                width: 150,
                 filterable: false,
                 sortable: false,
                 Cell: ({original}) => {
                     const status = 'approved';
+                    let isDisabled = original.status === 'deleted' ? true : false;
+                    let color = isDisabled ? 'grey' : '#14eb14';
                     return (
-                        <button className='fontawesom-btn' style={btnStyle} onClick={() => self.handleUpdateReportStatus(original.reportId, status)}>
+                        <button className='fontawesom-btn' style={btnStyle}
+                                onClick={() => self.handleUpdateReportStatus(original.reportId, status)}
+                                disabled={isDisabled}>
                             <FontAwesome
-                                style={{color: '#14eb14',marginLeft: 9}}
-                                disabled={false}
+                                style={{color: color,marginLeft: 9}}
                                 name='thumbs-up'
                                 size='2x'
                             />
@@ -193,7 +176,7 @@ class AdminReport extends React.Component {
                 Header: 'Delete Report',
                 accessor: '',
                 style: {textAlign: 'center'},
-                width: 200,
+                width: 150,
                 filterable: false,
                 sortable: false,
                 Cell: ({original}) => {
@@ -211,31 +194,27 @@ class AdminReport extends React.Component {
                 }
             },
             {
-                Header: 'Created Date',
+                Header: 'Created Date/Time',
                 accessor: '',
                 id: 'createdAt',
                 width: 150,
+                style: {textAlign: 'center'},
                 Cell: ({ original }) => {
-                    let date = new Date(original.createdAt);
-                    let day_raw = date.getDate();
-                    let month_raw = date.getMonth() + 1;
-                    let day = day_raw < 10 ? '0' + day_raw : '' + day_raw;
-                    let month = month_raw < 10 ? '0' + month_raw : '' + month_raw;
-                    return `${day}/${month}/${date.getFullYear()}`;
+                    let str = original.createdAt;
+                    let dateTime = moment.parseZone(str).format('DD/MM/YYYY HH:mm:ss a');
+                    return `${dateTime}`;
                 }
             },
             {
-                Header: 'Updated Date',
+                Header: 'Updated Date/Time',
                 accessor: '',
                 id: 'updatedAt',
                 width: 150,
+                style: {textAlign: 'center'},
                 Cell: ({ original }) => {
-                    let date = new Date(original.updatedAt);
-                    let day_raw = date.getDate();
-                    let month_raw = date.getMonth() + 1;
-                    let day = day_raw < 10 ? '0' + day_raw : '' + day_raw;
-                    let month = month_raw < 10 ? '0' + month_raw : '' + month_raw;
-                    return `${day}/${month}/${date.getFullYear()}`;
+                    let str = original.updatedAt;
+                    let dateTime = moment.parseZone(str).format('DD/MM/YYYY HH:mm:ss a');
+                    return `${dateTime}`;
                 }
             },
         ];
@@ -260,20 +239,23 @@ class AdminReport extends React.Component {
     }
 
     // Updates report status
-    handleUpdateReportStatus(reportId, status) {
-        const messageText = status === 'approved' ? promptMessage.approved : promptMessage.deleted;
+    handleUpdateReportStatus(reportId, reportStatus) {
+        const self = this;
+        const messageText = reportStatus === 'approved' ? promptMessage.approved : promptMessage.deleted;
         helpers.general.prompt({message: messageText}, function (status) {
             if (status === true) {
                 let data = {
                     reportId: reportId,
-                    status: status
+                    status: reportStatus
                 }
-                UsersModel.updateReportStatus({data}, () => {
-
+                AdminModel.updateReportStatus(data, (response) => {
+                    if(response && response.status) {
+                        // Refetch all users data
+                        self.fetchAllUsersReport();
+                    }
                 })
             }
         });
-
     }
 
     render() {
@@ -282,7 +264,7 @@ class AdminReport extends React.Component {
 
         return (
             <div className='row justify-content-center'>
-                <h3 className='col-3 text-align-center mt-3 mb-5'>Admin Report Settings</h3>
+                <h3 className='col-3 text-align-center mt-3 mb-5'>Admin Report Dashboard</h3>
                 <div className='col-10'>
                     <ReactTable
                         loading={false}
@@ -306,21 +288,22 @@ class AdminReport extends React.Component {
 
 }
 
-AdminReport.propTypes = {
+AdminReportTable.propTypes = {
 };
 
 /**
  * Fetch contents from redux store and bind to props in return value
  * @param {*} state
  */
-const mapStateToProps = state => {
-    return {}
-}
+const mapStateToProps = state => ({
+    currentUser: state.user.userInfo
+})
 
 /**
  * Bind redux state modifying actions to props
  */
 const mapDispatchToProps = {
+
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminReport));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminReportTable));

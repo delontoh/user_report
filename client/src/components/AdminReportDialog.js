@@ -8,8 +8,9 @@ import { withRouter } from 'react-router-dom';
 import {Formik} from "formik";
 import * as Yup from "yup";
 import FontAwesome from 'react-fontawesome';
-import { Dialog, TextField } from 'material-ui';
-import * as UsersModel from "../models/user";
+import moment from 'moment';
+import { Dialog } from 'material-ui';
+import * as AdminModel from "../models/admin";
 import RaisedButton from "material-ui/RaisedButton";
 
 const style = {
@@ -34,7 +35,7 @@ class AdminReportDialog extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {};
     }
 
     closeDialog() {
@@ -48,7 +49,7 @@ class AdminReportDialog extends React.Component {
         return(
             <div>
                 <Dialog
-                    title={<div>Report Content
+                    title={<div>User Report
                         <FontAwesome
                             className="float-right"
                             onClick={this.closeDialog.bind(this)}
@@ -68,15 +69,20 @@ class AdminReportDialog extends React.Component {
                     <Formik
                         initialValues = {{date: content.date, username: content.userName, report: content.content}}
                         onSubmit = {(values, {setSubmitting}) => {
-                            setTimeout(() => {
-                                console.log("Submitting form =>> ", values);
-                                // update report given report Id
-                                UsersModel.submitReport(values, () => {
-                                    console.log('Form submitted sucessfully')
-                                });
-
-                                setSubmitting(false);
-                            }, 500);
+                            // format date to iso string
+                            values.date = moment(values.date).toISOString();
+                            // prepare data for update
+                            let query = {
+                                reportId: content.reportId,
+                                reportDate: values.date,
+                                content: values.report ? JSON.stringify(values.report) : ''
+                            };
+                            AdminModel.updateReportInfo(query, (response) => {
+                                if(response && response.status) {
+                                    this.closeDialog();
+                                }
+                            })
+                            setSubmitting(false);
                         }}
                         validationSchema={Yup.object().shape({
                             report:
@@ -99,6 +105,8 @@ class AdminReportDialog extends React.Component {
                                                 type="date"
                                                 placeholder="Select date"
                                                 value={values.date}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
                                                 className={errors.date && touched.date && "error"}
                                             />
 

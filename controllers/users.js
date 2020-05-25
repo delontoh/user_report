@@ -1,28 +1,29 @@
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
+const helpers = require('../helpers')
 const constants = require('../config/constants');
+const passwordHash = require('password-hash');
 
 module.exports = (db) => {
     const { UsersModel } = require('../models')(db);
-
     let UsersController = {};
 
     /**
-     * Get user by username
-     * @param {Array<String>} username
+     * Get user information by userName
+     * @param {String} userName
      * @returns {Promise<any>}
      */
-    UsersController.getUserByUsername = async (username) => {
-        const user = await UsersModel.findOne({ where: { userName: username } });
+    UsersController.getUserInfoByUsername = async(userName) => {
+        const user = await UsersModel.findOne({ where: { userName: userName } });
         return user;
-    };
+    }
 
     /**
      * Get user by id
      * @param {Array<String>} id
      * @returns {Promise<any>}
      */
-    UsersController.getUserById = async (id) => {
+    UsersController.getUserById = async(id) => {
         const user = await UsersModel.findOne({ where: { userId: id } });
         return user;
     };
@@ -32,7 +33,7 @@ module.exports = (db) => {
      * @param {Array<String>} id
      * @returns {Promise<any>}
      */
-    UsersController.getAdminUserById = async (id) => {
+    UsersController.getAdminUserById = async(id) => {
         const user = await UsersModel.findOne({
             where: {
                 [Op.and]: [
@@ -43,6 +44,24 @@ module.exports = (db) => {
         return user.dataValues;
     };
 
+    /**
+     * Register new user
+     * @param {Object<String>} data
+     * @returns {Promise<any>}
+     */
+    UsersController.registerNewUser = async(data) => {
+        let { userName, password } = data;
+        let userId = helpers.api.generateId();
+        const hashedPassword = passwordHash.generate(password);
+
+        const newUser = await UsersModel.create({
+            userId: userId,
+            userType: constants.USER_TYPE.USER,
+            userName: userName,
+            password: hashedPassword
+        });
+        return newUser.dataValues;
+    }
 
     return UsersController;
 }

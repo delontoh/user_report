@@ -21,20 +21,26 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 /*
+ * Enable CORS
+ */
+let cors = require('cors')
+app.use(cors());
+
+/*
  * Passport
  */
-const passport = require('passport');
-const session = require('express-session');
+// const passport = require('passport');
+// const session = require('express-session');
 
 module.exports = (db) => {
     // Api routes
     app.use('/api', require('./api')(db));
-    // Initialise passport
-    const initializePassport = require('../config/passport');
-    initializePassport(passport, db);
 
-    app.use(session({ secret: process.env.SESSION_SECRET, resave: true, saveUninitialized: true}));
-    app.use(passport.initialize());
-    app.use(passport.session());
+    // Initialise passport
+    // const initializePassport = require('../config/passport');
+    // initializePassport(passport, db);
+    // app.use(session({ secret: process.env.SESSION_SECRET, resave: true, saveUninitialized: true}));
+    // app.use(passport.initialize());
+    // app.use(passport.session());
     return app;
 }

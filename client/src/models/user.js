@@ -1,5 +1,4 @@
 import $ from 'jquery';
-
 const apiUrl = "http://localhost:3000"
 
 /**
@@ -11,6 +10,21 @@ export function userLogin(data, callback) {
     $.ajax({
         method: "POST",
         url: apiUrl + '/api/user/login',
+        dataType: "json",
+        data: data,
+        error: callback
+    }).done(callback);
+}
+
+/**
+ * Get user info by userName
+ * @param data
+ * @param callback
+ */
+export function getUserInfoByUsername(data, callback) {
+    $.ajax({
+        method: "GET",
+        url: apiUrl + '/api/user/get-user',
         dataType: "json",
         data: data,
         error: callback
@@ -48,44 +62,14 @@ export function getUserReportsByUserId(data, callback) {
 }
 
 /**
- * Get single report by reportId
+ * Register new user
  * @param data
  * @param callback
  */
-export function getReportByReportId(data, callback) {
-    $.ajax({
-        method: "GET",
-        url: apiUrl + '/api/user/report',
-        dataType: "json",
-        data: data,
-        error: callback
-    }).done(callback);
-}
-
-/**
- * Get all users reports by admin userId
- * @param data
- * @param callback
- */
-export function adminGetAllReports(data, callback) {
-    $.ajax({
-        method: "GET",
-        url: apiUrl + '/api/admin/users-reports',
-        dataType: "json",
-        data: data,
-        error: callback
-    }).done(callback);
-}
-
-/**
- * Update user report status by reportId
- * @param data
- * @param callback
- */
-export function updateReportStatus(data, callback) {
+export function registerNewUser(data, callback) {
     $.ajax({
         method: "POST",
-        url: apiUrl + '/api/user/update-report',
+        url: apiUrl + '/api/user/register',
         dataType: "json",
         data: data,
         error: callback

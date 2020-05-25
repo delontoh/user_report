@@ -13,13 +13,16 @@ module.exports = (db) => {
      * @returns {Promise<*>}
      */
     ReportsController.addReportByUserId = async(data) => {
-        let { date, content, userId } = data;
+        const { reportDate, content, userId } = data;
+        // Generate report UUID
         let reportId = helpers.api.generateId();
-        let status = constants.REPORT_STATUS.APPROVED;
+        // Set default status as 'PENDING'
+        let status = constants.REPORT_STATUS.PENDING;
+        // Create new report record
         const newReport = await ReportsModel.create({
             reportId: reportId,
             userId: userId,
-            reportDate: date,
+            reportDate: reportDate,
             content: content,
             status: status
         });
@@ -27,19 +30,20 @@ module.exports = (db) => {
     };
 
     /**
-     * Get user reports by userId where status is 'APPROVED' or 'PENDING'
+     * Get user reports by userId where status is 'APPROVED' or 'DELETED'
      * @param {Object} data
      * @returns {Promise<*>}
      */
     ReportsController.getReportsByUserId = async(data) => {
-        let { userId } = data;
+        const { userId } = data;
         let getUserReports = await ReportsModel.findAll(
             { where:
                 { userId: userId,
                     status: {
-                        [Op.or] : [constants.REPORT_STATUS.PENDING, constants.REPORT_STATUS.APPROVED]
+                        [Op.or] : [constants.REPORT_STATUS.APPROVED, constants.REPORT_STATUS.DELETED]
                     }
-                }
+                },
+              raw: true
             }
         );
         getUserReports = getUserReports.length > 0 ? getUserReports : [];
@@ -52,7 +56,7 @@ module.exports = (db) => {
      * @returns {Promise<*>}
      */
     ReportsController.getReportByReportId = async(data) => {
-        let { reportId } = data;
+        const { reportId } = data;
         let report = await ReportsModel.findOne(
             { where: { reportId: reportId }}
         );
@@ -77,9 +81,18 @@ module.exports = (db) => {
      * Update report status by reportId
      * @returns {Promise<*>}
      */
-    ReportsController.updateReportByReportId = async(data) => {
-        let { reportId, status } = data;
+    ReportsController.updateReportStatusByReportId = async(data) => {
+        const { reportId, status } = data;
         return await ReportsModel.update({status: status}, {where: {reportId: reportId}});
+    }
+
+    /**
+     * Update report information by reportId
+     * @returns {Promise<*>}
+     */
+    ReportsController.updateReportInfoByReportId = async(data) => {
+        const {reportId, reportDate, content} = data;
+        return await ReportsModel.update({reportDate: reportDate, content: content}, {where: {reportId: reportId}});
     }
 
     return ReportsController;

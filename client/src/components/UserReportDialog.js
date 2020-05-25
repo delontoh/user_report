@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
-import { Dialog, TextField } from 'material-ui';
+import { Dialog } from 'material-ui';
 
 /*======================================================================================================================
  * define react component
@@ -29,7 +29,7 @@ class UserReportDialog extends React.Component {
         return(
             <div>
                 <Dialog
-                    title={<div>
+                    title={<div>User's Report
                         <FontAwesome
                             className="float-right"
                             onClick={this.closeDialog.bind(this)}
@@ -45,13 +45,12 @@ class UserReportDialog extends React.Component {
                     autoScrollBodyContent={true}
                     repositionOnUpdate={true}
                 >
-                    <div className="text-align-center">
-                        <TextField
-                            id="multiline-static"
-                            multiline
-                            rows={10}
-                            disabled={true}
+                    <div>
+                        <textarea
+                            name="report"
+                            placeholder="Write report here (max 250 characters)"
                             value={content}
+                            disabled={true}
                         />
                     </div>
                 </Dialog>

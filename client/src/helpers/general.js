@@ -76,3 +76,26 @@ export function prompt (data, callback) {
         });
     }
 }
+
+/**
+ * generic prompt using Sweetalert2
+ * @param {PromptData} data
+ * @param callback
+ */
+export function promptAlert (data, callback) {
+    if (data && data.message) {
+        swal({
+            title: data.title || 'Alert',
+            html: data.message,
+            type: data.alertType || "warning",
+            reverseButtons: true,
+            showCancelButton: false,
+            confirmButtonColor: "#0091F4",
+            confirmButtonText: "Ok"
+        }).then(function () {
+            callback(true);
+        }, function () {
+            callback(false);
+        });
+    }
+}

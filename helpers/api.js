@@ -14,6 +14,10 @@ ApiHelper.createApiRes = (req, res, httpCode, message, resData) => {
     return res.status(httpCode).json({message, ...resData});
 };
 
+/**
+ * Generate UUID
+ * @returns {*}
+ */
 ApiHelper.generateId = () => {
     let id = uuidv4();
     return id;

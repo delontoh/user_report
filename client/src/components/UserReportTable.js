@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table-6';
 import FontAwesome from 'react-fontawesome';
+import moment from "moment";
 import { helpers } from '../helpers/index';
 import UserReportDialog from './UserReportDialog';
 
 const style = {
     dangerColor: '#f44336',
-    warningColor: '#ff8c00',
     successColor: '#4caf50'
 }
 
@@ -25,57 +25,19 @@ const btnStyle = {
  * define react component
  *====================================================================================================================*/
 class UserReportTable extends React.Component {
-
     constructor() {
         super();
         this.state = {
             showReportDialog: false,
             dialogContent: '',
             open: false,
-        }
-    }
-
-    componentDidMount() {
-        // fetch all reports given user id
-        let dummyData = [
-            {
-                reportId: "1",
-                userId: "2",
-                reportDate: "2020-05-24T11:01:47.220Z",
-                content: "User 2: this is my first report",
-                status: "pending",
-                createdAt: "2020-05-24T11:01:47.220Z",
-                updatedAt: "2020-05-24T11:01:47.220Z"
-            },
-            {
-                reportId: "2",
-                userId: "2",
-                reportDate: "2020-05-24T11:01:47.220Z",
-                content: "User 2: this is my second report",
-                status: "pending",
-                createdAt: "2020-05-24T11:01:47.220Z",
-                updatedAt: "2020-05-24T11:01:47.220Z"
-            },
-            {
-                reportId: "3",
-                userId: "3",
-                reportDate: "2020-05-24T11:01:47.220Z",
-                content: "User 3: this is my first report",
-                status: "approved",
-                createdAt: "2020-05-24T11:01:47.220Z",
-                updatedAt: "2020-05-24T11:01:47.220Z"
-            },
-        ]
-
-        this.setState({data: dummyData});
+        };
     }
 
     formatStatusColor(status) {
         switch (status) {
             case 'deleted':
                 return <span style={{color: style.dangerColor}}>{helpers.general.prettifyConstant(status)}</span>;
-            case 'pending':
-                return <span style={{color: style.warningColor}}>{helpers.general.prettifyConstant(status)}</span>;
             case 'approved':
                 return <span style={{color: style.successColor}}>{helpers.general.prettifyConstant(status)}</span>;
             default:
@@ -89,20 +51,18 @@ class UserReportTable extends React.Component {
                 Header: 'Report Id',
                 accessor: 'reportId',
                 id: 'reportId',
-                width: 200
+                width: 250
             },
             {
                 Header: 'Report Date',
                 accessor: '',
                 id: 'reportDate',
                 width: 250,
+                style: {textAlign: 'center'},
                 Cell: ({ original }) => {
-                    let date = new Date(original.reportDate);
-                    let day_raw = date.getDate();
-                    let month_raw = date.getMonth() + 1;
-                    let day = day_raw < 10 ? '0' + day_raw : '' + day_raw;
-                    let month = month_raw < 10 ? '0' + month_raw : '' + month_raw;
-                    return `${day}/${month}/${date.getFullYear()}`;
+                    let str = original.reportDate;
+                    let date = moment.parseZone(str).format('DD/MM/YYYY');
+                    return `${date}`;
                 }
             },
             {
@@ -110,6 +70,7 @@ class UserReportTable extends React.Component {
                 accessor: 'status',
                 id: 'status',
                 width: 150,
+                style: {textAlign: 'center'},
                 Cell: ({original}) => {
                     return self.formatStatusColor(original.status);
                 }
@@ -135,17 +96,15 @@ class UserReportTable extends React.Component {
                 }
             },
             {
-                Header: 'Updated Date',
+                Header: 'Updated Date/Time',
                 accessor: '',
                 id: 'updatedAt',
-                width: 250,
+                width: 200,
+                style: {textAlign: 'center'},
                 Cell: ({ original }) => {
-                    let date = new Date(original.updatedAt);
-                    let day_raw = date.getDate();
-                    let month_raw = date.getMonth() + 1;
-                    let day = day_raw < 10 ? '0' + day_raw : '' + day_raw;
-                    let month = month_raw < 10 ? '0' + month_raw : '' + month_raw;
-                    return `${day}/${month}/${date.getFullYear()}`;
+                    let str = original.updatedAt;
+                    let dateTime = moment.parseZone(str).format('DD/MM/YYYY HH:mm:ss a');
+                    return `${dateTime}`;
                 }
             },
         ];
@@ -170,7 +129,8 @@ class UserReportTable extends React.Component {
     }
 
     render() {
-        let { data, showReportDialog, dialogContent, open } = this.state;
+        let { showReportDialog, dialogContent, open } = this.state;
+        let { data } = this.props;
         let noDataText = 'No reports submitted';
 
         return (
@@ -203,9 +163,8 @@ UserReportTable.propTypes = {
  * Fetch contents from redux store and bind to props in return value
  * @param {*} state
  */
-const mapStateToProps = state => {
-    return {}
-}
+const mapStateToProps = state => ({
+})
 
 /**
  * Bind redux state modifying actions to props

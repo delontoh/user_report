@@ -1,5 +1,5 @@
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt-nodejs');
+// const bcrypt = require('bcrypt-nodejs');
 
 function initialize(passport, db) {
     const UsersController = require('../controllers/users')(db);
@@ -10,15 +10,15 @@ function initialize(passport, db) {
             return done(null, false, { message: 'Username does not exist' })
         }
 
-        try {
-            if (await bcrypt.compare(password, user.password)) {
-                return done(null, user)
-            } else {
-                return done(null, false, { message: 'Password incorrect' })
-            }
-        } catch (e) {
-            return done(e)
-        }
+        // try {
+        //     if (await bcrypt.compare(password, user.password)) {
+        //         return done(null, user)
+        //     } else {
+        //         return done(null, false, { message: 'Password incorrect' })
+        //     }
+        // } catch (e) {
+        //     return done(e)
+        // }
     };
 
     passport.use(new LocalStrategy({ usernameField: 'username' }, authenticateUser));
