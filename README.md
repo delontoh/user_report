@@ -37,16 +37,18 @@ npm run dev
 ### Premade User Credentials
 
 #### Admin User (fixed)
-Username: administrator
+Username: ```administrator```
 
-Password: @admin123
+Password: ```@admin123```
 
 #### Dummy Users
-1. Username: geralt_of_rivia 
-   Password: yennifer
+1. Username: ```geralt_of_rivia```
+
+   Password: ```yennifer```
    
-2. Username: jon_snow
-   Password: kingofthenorth
+2. Username: ```jon_snow```
+
+   Password: ```kingofthenorth```
    
    
 
