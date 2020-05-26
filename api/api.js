@@ -15,11 +15,40 @@ module.exports = (db) => {
 
 
     /**
-     * /api/user/login
-     * shows form and current user
+     * @api {post} /api/user/login
+     * @apiName UserLogin
+     * @apiVersion 1.0.0
+     * @apiGroup Api
+     * @apiDescription Login user
+     * @apiParam {String} userName user's userName
+     * @apiParam {String} password user's password
      */
-    router.get('/login', (req, res, next) => {
+    router.post('/user/login', async(req, res, next) => {
+        try {
+            let data = {
+                userName: req.body.userName || '',
+                password: req.body.password || ''
+            };
+            if(helpers.general.isEmpty(data.userName)) throw new Error('Missing request param: userName');
+            if(helpers.general.isEmpty(data.password)) throw new Error('Missing request param: password');
 
+            // Check if user exist
+            let getUserInfo = await UsersController.getUserInfoByUsername(data.userName);
+
+            if(helpers.general.isEmpty(getUserInfo)) {
+                return helpers.api.createApiRes(req, res, 200, 'Username does not exist', {user: {}});
+            } else {
+                // Verify user password
+                let isVerified = helpers.api.verifyPassword(data.password, getUserInfo.password);
+                if(isVerified) {
+                    return helpers.api.createApiRes(req, res, 200, 'User verification successful', {user: getUserInfo});
+                } else {
+                    return helpers.api.createApiRes(req, res, 200, 'User verification failed', {user: {}});
+                }
+            }
+        } catch (err) {
+            return helpers.api.createApiRes(req, res, 500, err.message);
+        }
     })
 
     /**
@@ -128,6 +157,29 @@ module.exports = (db) => {
             return helpers.api.createApiRes(req, res, 500, err.message);
         }
     })
+
+    // /**
+    //  * @api {get} /api/user/report
+    //  * @apiName UserReport
+    //  * @apiVersion 1.0.0
+    //  * @apiGroup Api
+    //  * @apiDescription Get single user report by reportId
+    //  * @apiParam {String} reportId report id
+    //  */
+    // router.get('/user/report', async (req, res, next) => {
+    //     try {
+    //         let data = {
+    //             reportId: req.query.reportId || ''
+    //         };
+    //         // Check for missing request params
+    //         if(helpers.general.isEmpty(data.reportId)) throw new Error('Missing request param: reportId');
+    //         // Fetch all reports belonging to user
+    //         let userReport = await ReportController.getReportByReportId(data);
+    //         return helpers.api.createApiRes(req, res, 200, 'User report retrieved sucessfully', {userReport: userReport});
+    //     } catch (err) {
+    //         return helpers.api.createApiRes(req, res, 500, err.message);
+    //     }
+    // })
 
     /**
      * @api {post} /api/admin/update-report-status

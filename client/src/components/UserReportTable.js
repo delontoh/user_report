@@ -157,6 +157,7 @@ class UserReportTable extends React.Component {
 }
 
 UserReportTable.propTypes = {
+    data: PropTypes.array.isRequired
 };
 
 /**

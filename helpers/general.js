@@ -1,4 +1,5 @@
 let generalHelper = module.exports;
+
 /**
  * check variable for empty value
  * @param value

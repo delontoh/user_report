@@ -16,20 +16,20 @@ export function userLogin(data, callback) {
     }).done(callback);
 }
 
-/**
- * Get user info by userName
- * @param data
- * @param callback
- */
-export function getUserInfoByUsername(data, callback) {
-    $.ajax({
-        method: "GET",
-        url: apiUrl + '/api/user/get-user',
-        dataType: "json",
-        data: data,
-        error: callback
-    }).done(callback);
-}
+// /**
+//  * Get user info by userName
+//  * @param data
+//  * @param callback
+//  */
+// export function getUserInfoByUsername(data, callback) {
+//     $.ajax({
+//         method: "GET",
+//         url: apiUrl + '/api/user/get-user',
+//         dataType: "json",
+//         data: data,
+//         error: callback
+//     }).done(callback);
+// }
 
 /**
  * Submit user report
@@ -55,6 +55,21 @@ export function getUserReportsByUserId(data, callback) {
     $.ajax({
         method: "GET",
         url: apiUrl + '/api/user/all-reports',
+        dataType: "json",
+        data: data,
+        error: callback
+    }).done(callback);
+}
+
+/**
+ * Get single user report by reportId
+ * @param data
+ * @param callback
+ */
+export function getReportByReportId(data, callback) {
+    $.ajax({
+        method: "GET",
+        url: apiUrl + '/api/user/report',
         dataType: "json",
         data: data,
         error: callback

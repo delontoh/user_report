@@ -33,8 +33,8 @@ const labelStyle = {
  *====================================================================================================================*/
 class AdminReportDialog extends React.Component {
 
-    constructor(props) {
-        super(props);
+    constructor() {
+        super();
         this.state = {};
     }
 
@@ -44,7 +44,7 @@ class AdminReportDialog extends React.Component {
     }
 
     render() {
-        let { content, open } = this.props;
+        let { content, open, currentUser } = this.props;
 
         return(
             <div>
@@ -80,6 +80,7 @@ class AdminReportDialog extends React.Component {
                             AdminModel.updateReportInfo(query, (response) => {
                                 if(response && response.status) {
                                     this.closeDialog();
+                                    this.props.fetchAllUsersReport(currentUser)
                                 }
                             })
                             setSubmitting(false);
@@ -155,6 +156,10 @@ class AdminReportDialog extends React.Component {
 }
 
 AdminReportDialog.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    content: PropTypes.object.isRequired,
+    currentUser: PropTypes.object.isRequired
 };
 
 /**
@@ -162,6 +167,7 @@ AdminReportDialog.propTypes = {
  * @param {*} state
  */
 const mapStateToProps = state => ({
+    currentUser: state.user.userInfo
 })
 
 /**

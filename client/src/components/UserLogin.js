@@ -26,8 +26,8 @@ const labelStyle = {
     textTransform: 'captialize',
     fontSize: 14
 };
-
-const promptAlertMessage = 'Sorry this username is already taken. Please try again.'
+const promptAlertMessage = 'Sorry this username is already taken. Please try again.';
+const loginAlertMessage = 'Login failed. Please check your credentials.';
 
 /*======================================================================================================================
  * define react component
@@ -35,33 +35,37 @@ const promptAlertMessage = 'Sorry this username is already taken. Please try aga
 class UserLogin extends React.Component {
     constructor() {
         super();
-        this.state = {};
+        this.state = {
+            isRegisterButton: false
+        };
     }
 
-    componentDidMount() {
-        let query = {
-            userName: 'administrator'
-        };
-        UserModel.getUserInfoByUsername(query, (response) => {
-            if(response && response.user) {
-                // Set user info as currentUser
+    handleUserLogin(data) {
+        UserModel.userLogin(data, (response) => {
+            if(response && !helpers.general.isEmpty(response.user)) {
+                // Correct credentials provided
                 let user = response.user;
                 this.props.setUser(user);
-                // // // Redirects user accordingly
-                // if(user.userType && user.userType === 'user') {
-                //     this.props.history.push('/report');
-                // } else {
-                //     this.props.history.push('/admin');
-                // }
+                // Redirects user to correct page
+                if(user.userType === 'admin') {
+                    this.props.history.push('/admin');
+                } else {
+                    this.props.history.push('/report');
+                }
+                // Wrong credentials provided
+            } else {
+                helpers.general.promptAlert({message: loginAlertMessage}, (status) => {
+                    if(status) {
+                        this.props.history.push('/login');
+                    }
+                })
             }
-            // else {
-            //     this.props.history.push('/login')
-            // }
         })
     }
 
     handleRegisterNewUser(data) {
         UserModel.registerNewUser(data, (response) => {
+            // Username not taken hence proceed to register
             if(response && response.user) {
                 let user = response.user;
                 this.props.setUser(user);
@@ -69,7 +73,7 @@ class UserLogin extends React.Component {
             } else {
                 helpers.general.promptAlert({message: promptAlertMessage}, (status) => {
                     if(status) {
-                        console.log('Username is already taken');
+                        this.setState({isRegisterButton: false});
                     }
                 })
             }
@@ -77,18 +81,19 @@ class UserLogin extends React.Component {
     }
 
     render() {
+        const self = this;
 
         return (
             <Formik
-                initialValues = {{username: '', password: '', isRegisterButton: false}}
+                initialValues = {{username: '', password: ''}}
                 onSubmit = {(values, {setSubmitting}) => {
-                    let { isRegisterButton, username, password } = values;
+                    let { username, password } = values;
                     let data = { userName: username, password: password };
-
-                    if(isRegisterButton) {
+                    // Toggle between login and register buttons
+                    if(self.state.isRegisterButton) {
                         this.handleRegisterNewUser(data);
                     } else {
-
+                        this.handleUserLogin(data);
                     }
                     setSubmitting(false);
                 }}
@@ -143,12 +148,17 @@ class UserLogin extends React.Component {
                                     <div className='row'>
                                         <div className='col-3'>
                                             <RaisedButton
-                                                type="submit"
+                                                type="button"
                                                 disabled={isSubmitting}
                                                 style={style}
                                                 buttonStyle={buttonStyle}
                                                 labelStyle={labelStyle}
                                                 primary={true}
+                                                onClick={async (e) => {
+                                                    self.setState({isRegisterButton: false}, () =>{
+                                                        handleSubmit(e)
+                                                    })}
+                                                }
                                             >Login</RaisedButton>
                                         </div>
                                         <div className='col-3'>
@@ -158,11 +168,12 @@ class UserLogin extends React.Component {
                                                 style={style}
                                                 buttonStyle={buttonStyle}
                                                 labelStyle={labelStyle}
-                                                onClick={async (e) => {
-                                                    await setFieldValue('isRegisterButton', true);
-                                                    handleSubmit(e)}
-                                                }
                                                 primary={true}
+                                                onClick={async (e) => {
+                                                    self.setState({isRegisterButton: true}, () =>{
+                                                        handleSubmit(e)
+                                                    })}
+                                                }
                                             >Register</RaisedButton>
                                         </div>
                                     </div>
@@ -178,6 +189,7 @@ class UserLogin extends React.Component {
 }
 
 UserLogin.propTypes = {
+    setUser: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

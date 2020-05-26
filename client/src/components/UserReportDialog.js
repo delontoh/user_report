@@ -13,8 +13,8 @@ import { Dialog } from 'material-ui';
  *====================================================================================================================*/
 class UserReportDialog extends React.Component {
 
-    constructor(props) {
-        super(props);
+    constructor() {
+        super();
         this.state = {}
     }
 
@@ -61,6 +61,9 @@ class UserReportDialog extends React.Component {
 }
 
 UserReportDialog.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    content: PropTypes.string.isRequired
 };
 
 /**

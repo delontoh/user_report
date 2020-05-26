@@ -2,7 +2,6 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const helpers = require('../helpers')
 const constants = require('../config/constants');
-const passwordHash = require('password-hash');
 
 module.exports = (db) => {
     const { UsersModel } = require('../models')(db);
@@ -52,8 +51,7 @@ module.exports = (db) => {
     UsersController.registerNewUser = async(data) => {
         let { userName, password } = data;
         let userId = helpers.api.generateId();
-        const hashedPassword = passwordHash.generate(password);
-
+        const hashedPassword = helpers.api.hashPassword(password);
         const newUser = await UsersModel.create({
             userId: userId,
             userType: constants.USER_TYPE.USER,

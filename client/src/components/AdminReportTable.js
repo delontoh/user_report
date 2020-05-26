@@ -9,9 +9,10 @@ import ReactTable from 'react-table-6';
 import FontAwesome from 'react-fontawesome';
 import moment from "moment";
 import { helpers } from '../helpers/index';
+import { setUser } from '../actions/user';
 import AdminReportDialog from './AdminReportDialog';
 import * as AdminModel from '../models/admin';
-import user from "../reducers/user";
+import RaisedButton from "material-ui/RaisedButton";
 
 const style = {
     dangerColor: '#f44336',
@@ -27,6 +28,22 @@ const btnStyle = {
 const promptMessage = {
     approved: 'Approve this report?',
     deleted: 'Are you sure you want to delete this report?'
+};
+
+const logoutStyle = {
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
+    height: 40,
+    justifyContent: 'end'
+}
+const buttonStyle = {
+    borderRadius: 20,
+    height: 40,
+    lineHeight: '38px'
+};
+const labelStyle = {
+    textTransform: 'captialize',
+    fontSize: 14
 };
 
 /*======================================================================================================================
@@ -89,9 +106,9 @@ class AdminReportTable extends React.Component {
         const self = this;
         const tableColumns = [
             {
-                Header: 'User Id',
-                accessor: 'userId',
-                id: 'userId',
+                Header: 'Username',
+                accessor: 'userName',
+                id: 'userName',
                 width: 100
             },
             {
@@ -241,6 +258,7 @@ class AdminReportTable extends React.Component {
     // Updates report status
     handleUpdateReportStatus(reportId, reportStatus) {
         const self = this;
+        let {currentUser} = self.props;
         const messageText = reportStatus === 'approved' ? promptMessage.approved : promptMessage.deleted;
         helpers.general.prompt({message: messageText}, function (status) {
             if (status === true) {
@@ -251,19 +269,39 @@ class AdminReportTable extends React.Component {
                 AdminModel.updateReportStatus(data, (response) => {
                     if(response && response.status) {
                         // Refetch all users data
-                        self.fetchAllUsersReport();
+                        self.fetchAllUsersReport(currentUser);
                     }
                 })
             }
         });
     }
 
+    handleUserLogout() {
+        let user = {};
+        this.props.setUser(user);
+        this.props.history.push('/login');
+    }
+
     render() {
-        let { data, showReportDialog, dialogContent, open } = this.state;
+        const self = this;
+        let { data, showReportDialog, dialogContent, open } = self.state;
         let noDataText = 'No reports submitted';
 
         return (
             <div className='row justify-content-center'>
+                <div className='col-12 ml-5 mt-3'>
+                    <RaisedButton
+                        type="button"
+                        disabled={false}
+                        style={logoutStyle}
+                        buttonStyle={buttonStyle}
+                        labelStyle={labelStyle}
+                        onClick={() => {
+                            self.handleUserLogout();
+                        }}
+                        secondary={true}
+                    >Logout</RaisedButton>
+                </div>
                 <h3 className='col-3 text-align-center mt-3 mb-5'>Admin Report Dashboard</h3>
                 <div className='col-10'>
                     <ReactTable
@@ -279,7 +317,10 @@ class AdminReportTable extends React.Component {
                         columns={this.getReportTableColumns()}
                         noDataText={noDataText}
                     />
-                    {showReportDialog ? <AdminReportDialog content={dialogContent} open={open} onClose={this.onClose.bind(this)}/> : <div></div>
+                    {showReportDialog ? <AdminReportDialog content={dialogContent} open={open}
+                                                           onClose={this.onClose.bind(this)}
+                                                           fetchAllUsersReport={this.fetchAllUsersReport.bind(this)}
+                    /> : <div></div>
                     }
                 </div>
             </div>
@@ -289,6 +330,7 @@ class AdminReportTable extends React.Component {
 }
 
 AdminReportTable.propTypes = {
+    currentUser: PropTypes.object.isRequired
 };
 
 /**
@@ -303,7 +345,7 @@ const mapStateToProps = state => ({
  * Bind redux state modifying actions to props
  */
 const mapDispatchToProps = {
-
+    setUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminReportTable));
