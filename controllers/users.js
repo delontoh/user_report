@@ -19,7 +19,7 @@ module.exports = (db) => {
 
     /**
      * Get user by id
-     * @param {Array<String>} id
+     * @param {String} id
      * @returns {Promise<any>}
      */
     UsersController.getUserById = async(id) => {
@@ -29,7 +29,7 @@ module.exports = (db) => {
 
     /**
      * Get admin user by id
-     * @param {Array<String>} id
+     * @param {String} id
      * @returns {Promise<any>}
      */
     UsersController.getAdminUserById = async(id) => {
@@ -40,7 +40,7 @@ module.exports = (db) => {
                     { userType: constants.USER_TYPE.ADMIN}
                 ]
             }});
-        return user.dataValues;
+        return user ? user.dataValues : null;
     };
 
     /**

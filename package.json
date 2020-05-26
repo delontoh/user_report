@@ -9,7 +9,7 @@
     "client": "cd client && npm start",
     "server": "npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/**/*.js",
     "start": "NODE_ENV='development' node index.js",
     "nodemon": "NODE_ENV='development' nodemon --inspect --trace-warnings index.js",
     "migrate:ups": "npx sequelize-cli db:migrate",
@@ -42,8 +42,10 @@
     "uuid": "^8.1.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
     "concurrently": "^5.2.0",
     "dotenv": "^8.2.0",
+    "mocha": "^7.2.0",
     "nodemon": "^2.0.4",
     "sequelize-cli": "^5.5.1"
   }

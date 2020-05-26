@@ -60,7 +60,7 @@ module.exports = (db) => {
         let report = await ReportsModel.findOne(
             { where: { reportId: reportId }}
         );
-        return report.dataValues;
+        return report ? report.dataValues : null;
     }
 
     /**

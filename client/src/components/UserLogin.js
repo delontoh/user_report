@@ -112,7 +112,7 @@ class UserLogin extends React.Component {
             >
                 {
                     (props) => {
-                        const {values, touched, errors, isSubmitting, handleChange, handleBlur, handleSubmit, setFieldValue} = props;
+                        const {values, touched, errors, isSubmitting, handleChange, handleBlur, handleSubmit} = props;
 
                         return(
                             <div>
