@@ -17,6 +17,7 @@ Only when the entry is approved, it should be shown in the system. And the repor
 
 ### Libraries and Database
 ReactJs v16.13.1
+
 SQLite3  v4.2.0
 
 
@@ -33,9 +34,9 @@ npm run dev
 ```
 
 
-### User Credentials
+### Premade User Credentials
 
-#### Admin User
+#### Admin User (fixed)
 Username: administrator
 
 Password: @admin123
@@ -46,7 +47,18 @@ Password: @admin123
    
 2. Username: jon_snow
    Password: kingofthenorth
+   
+   
 
+#### (*Do note that new users can be registered at login page)
+
+
+### Reports Status
+Normal users are only able to view reports that are in 'APPROVED' or 'DELETED' status.
+
+Newly submitted reports will be in 'PENDING' status. 
+
+Admin user has to approve the report before the user can view the submitted report.
 
 
 ### Testing framework
