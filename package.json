@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "init": "npm install && mkdir data && npm run migrate:ups && npm run seed:ups && npm run initClient",
-    "initClient": "cd client npm install",
+    "initClient": "cd client && npm install",
     "client": "cd client && npm start",
     "server": "npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
