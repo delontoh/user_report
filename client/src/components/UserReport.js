@@ -123,6 +123,8 @@ class UserReport extends React.Component {
                                     UserModel.submitReport(query, (response) => {
                                         if(response && response.report) {
                                             self.fetchUserReports(userId);
+                                            values.report = '';
+                                            values.date = defaultDate;
                                         }
                                     });
                                     setSubmitting(false);
@@ -135,6 +137,9 @@ class UserReport extends React.Component {
                             report:
                                 Yup.string()
                                     .max(250, "Maximum of 250 characters")
+                                    .required("Required*"),
+                            date:
+                                Yup.date()
                                     .required("Required*")
                         })}
                     >

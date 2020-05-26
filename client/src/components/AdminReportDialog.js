@@ -70,7 +70,7 @@ class AdminReportDialog extends React.Component {
                         initialValues = {{date: content.date, username: content.userName, report: content.content}}
                         onSubmit = {(values, {setSubmitting}) => {
                             // format date to iso string
-                            values.date = moment(values.date).toISOString();
+                            values.date = moment.parseZone(values.date).toISOString();
                             // prepare data for update
                             let query = {
                                 reportId: content.reportId,
@@ -89,6 +89,9 @@ class AdminReportDialog extends React.Component {
                             report:
                                 Yup.string()
                                     .max(250, "Maximum of 250 characters")
+                                    .required("Required*"),
+                            date:
+                                Yup.date()
                                     .required("Required*")
                         })}
                     >
